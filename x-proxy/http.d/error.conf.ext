@@ -1,0 +1,72 @@
+
+  error_page 500 /500.json;
+  location       /500.json {
+    default_type 'Content-Type: application/json charset=UTF-8';
+    return 500 '{"error":{"code":500,"message":"Internal Server Error"}}';
+  }
+
+  error_page 502 /502.json;
+  location /502.json {
+    default_type 'Content-Type: application/json charset=UTF-8';
+    return 502 '{"error":{"code":502,"message":"Bad Gateway"}}';
+  }
+
+  error_page 503 /503.json;
+  location /503.json {
+    default_type 'Content-Type: application/json charset=UTF-8';
+    return 503 '{"error":{"code":503,"message":"Service Temporarily Unavailable"}}';
+  }
+
+  error_page 504 /504.json;
+  location /504.json {
+    default_type 'Content-Type: application/json charset=UTF-8';
+    return 504 '{"error":{"code":504,"message":"Gateway Timeout"}}';
+  }
+
+  error_page 400 /400.json;
+  location /400.json {
+    default_type 'Content-Type: application/json charset=UTF-8';
+    return 400 '{"error":{"code":400,"message":"Bad Request"}}';
+  }
+
+  error_page 401 /401.json;
+  location /401.json {
+    default_type 'Content-Type: application/json charset=UTF-8';
+    return 401 '{"error":{"code":401,"message":"Unauthorized"}}';
+  }
+
+  error_page 403 /403.json;
+  location /403.json {
+    default_type 'Content-Type: application/json charset=UTF-8';
+    return 403 '{"error":{"code":403,"message": "Forbidden"}}';
+  }
+
+  error_page 404 /404.json;
+  location /404.json {
+    default_type 'Content-Type: application/json charset=UTF-8';
+    return 404 '{"error":{"code":404,"message":"Not Found"}}';
+  }
+
+  error_page 408 /408.json;
+  location /408.json {
+    default_type 'Content-Type: application/json charset=UTF-8';
+    return 408 '{"error":{"code":408,"message":"Request Timeout}}';
+  }
+
+  error_page 418 /418.json;
+  location /418.json {
+    default_type 'Content-Type: application/json charset=UTF-8';
+    return 418 '{"error":{"code":418,"message":"I\'m a teapot"}}';
+  }
+
+  error_page 429 /429.json;
+  location /429.json {
+    default_type 'Content-Type: application/json charset=UTF-8';
+    return 429 '{"error":{"code":429,"message":"Too Many Requests"}}';
+  }
+
+  error_page 431 /431.json;
+  location /431.json {
+    default_type 'Content-Type: application/json charset=UTF-8';
+    return 431 '{"error":{"code":431,"message":"Request Header Or Cookie Too Large"}}';
+  }

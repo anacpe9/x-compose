@@ -1,0 +1,94 @@
+version: '3'
+
+# note: ensure user/pass is single-line
+# sed -i -z 's/\n//g' ./x-db/init/.mongo-*
+secrets:
+  mongo-admin-user:
+    file: ./x-db/init/.mongo-admin-user
+  mongo-admin-pass:
+    file: ./x-db/init/.mongo-admin-pass
+  mongo-app-user:
+    file: ./x-db/init/.mongo-app-user
+  mongo-app-pass:
+    file: ./x-db/init/.mongo-app-pass
+
+services:
+  db:
+    image: mongo:4.4
+    hostname: db
+    container_name: db
+    restart: unless-stopped
+    command: --auth
+    env_file:
+      - ./x-db/conf.env
+    secrets:
+      - mongo-admin-user
+      - mongo-admin-pass
+      - mongo-app-user
+      - mongo-app-pass
+    volumes:
+      - ./db:/data/db:Z
+      - ./bak:/data/bak
+      - ./x-db/init.sh:/docker-entrypoint-initdb.d/init.sh
+
+  identity:
+    image: registry.gitlab.com/token-x/x-identity:1.0.1
+    hostname: identity
+    container_name: identity
+    restart: unless-stopped
+    env_file:
+      - ./x-identity/init/conf.env
+    # volumes:
+    #   - ./x-identity/config:/app/config
+    #   - ./x-identity/upload:/app/upload
+
+  # x-noti:
+  #   image: registry.gitlab.com/token-x/x-noti:1.0.0
+  #   hostname: x-noti
+  #   container_name: x-noti
+  #   restart: unless-stopped
+  #   depends_on:
+  #     - x-db
+  #   env_file:
+  #     - ./x-noti/init/conf.env
+  #   # volumes:
+  #   #   - ./x-identity/config:/app/config
+  #   #   - ./x-identity/upload:/app/upload
+
+  store:
+    image: registry.gitlab.com/token-x/x-store:1.0.1
+    hostname: store
+    container_name: store
+    restart: unless-stopped
+    depends_on:
+      - db
+    env_file:
+      - ./x-store/init/conf.env
+    # volumes:
+    #   - ./x-identity/config:/app/config
+    #   - ./x-identity/upload:/app/upload
+
+  store-web:
+    image: registry.gitlab.com/token-x/x-store-web:1.0.7-token-x
+    hostname: store-web
+    container_name: store-web
+    restart: unless-stopped
+    # volumes:
+    #   - ./x-store-web/config:/usr/share/nginx/html/config
+
+  proxy:
+    image: registry.gitlab.com/token-x/nginx:1.22.0-r1
+    hostname: proxy
+    container_name: proxy
+    restart: unless-stopped
+    depends_on:
+      - store
+      - store-web
+      - identity
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./x-proxy/cert:/usr/share/nginx/cert
+      - ./x-proxy/http.d:/etc/nginx/http.d
+      - ./x-proxy/nginx.conf:/etc/nginx/nginx.conf:ro
