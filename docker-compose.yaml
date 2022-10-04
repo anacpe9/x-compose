@@ -69,7 +69,7 @@ services:
     #   - ./x-identity/upload:/app/upload
 
   store-web:
-    image: registry.gitlab.com/token-x/x-store-web:1.0.7-token-x
+    image: registry.gitlab.com/token-x/x-store-web:1.0.8-token-x
     hostname: store-web
     container_name: store-web
     restart: unless-stopped
